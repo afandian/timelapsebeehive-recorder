@@ -1,85 +1,77 @@
 package com.afandian.langstroth;
 
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
 import android.media.MediaRecorder;
-import android.media.MediaScannerConnection;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+
 /**
  * Created by joe on 24/04/2015.
  */
 public class RecordingService extends IntentService {
-    // A new MediaRecorder is acquired each time this fires.
-    MediaRecorder recorder = null;
-
-    String baseDirectory;
 
     public RecordingService() {
         super("SchedulingService");
     }
 
-    public RecordingService(String baseDirectory) {
-        super("SchedulingService");
-        this.baseDirectory = baseDirectory;
-    }
-
     class MediaListener implements MediaRecorder.OnInfoListener {
-        public void onInfo(MediaRecorder mr, int what, int extra) {
+
+        public MediaListener() {
+        }
+
+        public void onInfo(MediaRecorder rec, int what, int extra) {
             if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
-                RecordingService.this.disposeAudio();
+                rec.stop();
+                rec.reset();
+                rec.release();
+
+                // We may have a wake lock from the Alarm.
+                // Release it if we have it.
+//                if (this.intent != null) {
+//                    AlarmReceiver.completeWakefulIntent(this.intent);
+//                }
             }
         }
     }
 
-    private void disposeAudio() {
-        this.recorder.stop();
-        this.recorder.reset();
-        this.recorder.release();
-        this.recorder = null;
-    }
+    public void triggerRaw(String baseDirectory)  {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.UK);
+        String filename = baseDirectory + "/" + sdf.format(new Date()) + ".wav";
 
-    public void trigger() {
-        if (this.recorder == null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.UK);
-            String filename = baseDirectory + "/" + sdf.format(new Date()) + ".mp4";
+        AudioRecorder recorder = new AudioRecorder();
+        recorder.startRecording(filename);
 
-            this.recorder = new MediaRecorder();
-            this.recorder.setOnInfoListener(new MediaListener());
+        // Record for 5 seconds.
+        // TODO can do this sample-accurately.
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException ex) {
 
-            recorder.reset();
-            recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
-            recorder.setOutputFile(filename);
-            recorder.setMaxDuration(1000 * 5);
-
-            try {
-                recorder.prepare();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e("Langstroth", e.getMessage());
-            }
-
-            recorder.start();   // Recording is now started
-        } else {
-            Log.e("Langstroth", "Busy!");
         }
+
+        recorder.stop();
+
     }
+
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        this.baseDirectory = intent.getStringExtra("baseDirectory");
-        this.trigger();
+        String baseDirectory = intent.getStringExtra("baseDirectory");
+
+        if (baseDirectory == null) {
+            Log.e("Langstroth", "Tried to trigger alarm with no base directory");
+        } else {
+            this.triggerRaw(baseDirectory);
+        }
+
+        AlarmReceiver.completeWakefulIntent(intent);
     }
+
+
 }

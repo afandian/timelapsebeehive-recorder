@@ -18,12 +18,14 @@ import java.io.IOException;
 public class MainActivity extends ActionBarActivity {
     private AlarmReceiver alarm = new AlarmReceiver();
     // Keep an instance for 'record now'.
-    private RecordingService recordingService;
+//    private RecordingService recordingService;
+
+    // If this is null then we're not in a schedule session.
+    private Integer filesAtStartOfRecording = null;
 
     private String baseDirectory;
 
     TextView numFiles;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +35,7 @@ public class MainActivity extends ActionBarActivity {
         File filesDir = this.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
 
         this.baseDirectory = filesDir.getAbsolutePath();
-        this.recordingService = new RecordingService(this.baseDirectory);
+//        this.recordingService = new RecordingService();
 
         boolean result;
         try {
@@ -71,20 +73,34 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void start(View view) {
+        this.filesAtStartOfRecording = new Integer(this.fileCount());
         alarm.setAlarm(this, this.baseDirectory);
     }
 
     public void stop(View view) {
         alarm.cancelAlarm(this);
+        this.filesAtStartOfRecording = null;
+        this.refreshFileCount();
     }
 
     public void recordNow(View view) {
-        recordingService.trigger();
+        // TODO alarm.runOnce
+//        recordingService.trigger();
+    }
+
+    private int fileCount() {
+        return new File(this.baseDirectory).listFiles().length;
     }
 
     public void refreshFileCount() {
-        File[] preExisting = new File(this.baseDirectory).listFiles();
-        numFiles.setText(Integer.toString(preExisting.length));
+        int fileCount = this.fileCount();
+        String message = Integer.toString(fileCount) + " files";
+
+        if (this.filesAtStartOfRecording != null) {
+            Integer newFiles = fileCount - this.filesAtStartOfRecording;
+            message = message + ", " + newFiles.toString() + " since start of schedule";
+        }
+        numFiles.setText(message);
     }
 
     public void refreshFileCount(View view) {
