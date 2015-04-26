@@ -54,7 +54,7 @@
                 android:id="@+id/stop"
                 android:clickable="true"
                 android:onClick="stop"
-                android:layout_alignTop="@+id/button"
+                android:layout_alignTop="@+id/erase"
                 android:layout_alignRight="@+id/recordNow"
                 android:layout_alignEnd="@+id/recordNow"
                 android:layout_toRightOf="@+id/numFiles"
@@ -140,6 +140,38 @@
                 android:id="@+id/tenSeconds"
                 android:checked="false" />
         </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Files"
+            android:id="@+id/textView4" />
+
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="erase"
+                android:id="@+id/erase"
+                android:onClick="erase"
+                android:clickable="true" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="sync"
+                android:id="@+id/sync"
+                android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+
 
     </LinearLayout>
 

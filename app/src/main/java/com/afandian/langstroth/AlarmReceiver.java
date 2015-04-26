@@ -25,6 +25,8 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
 
         // Start the service, keeping the device awake while it is launching.
         startWakefulService(context, service);
+
+        // TODO notify MainActivity to update view.
     }
 
     public void setAlarm(Context context, String baseDirectory, MainActivity.duration duration, MainActivity.interval alarmInterval) {

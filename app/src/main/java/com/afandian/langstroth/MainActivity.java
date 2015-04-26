@@ -1,5 +1,7 @@
 package com.afandian.langstroth;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -41,14 +43,13 @@ public class MainActivity extends ActionBarActivity {
 
     TextView numFiles;
 
+    private Storage storage = new Storage(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        File filesDir = this.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
-
-        this.baseDirectory = filesDir.getAbsolutePath();
         this.numFiles =  (TextView)findViewById(R.id.numFiles);
 
         this.hour = (RadioButton)findViewById(R.id.hour);
@@ -85,7 +86,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void start(View view) {
-        this.filesAtStartOfRecording = new Integer(this.fileCount());
+        this.filesAtStartOfRecording = new Integer(this.storage.fileCount());
         alarm.setAlarm(this, this.baseDirectory, this.recordDuration, this.recordInterval);
         this.scheduleRunning = true;
         this.updateViewState();
@@ -98,12 +99,9 @@ public class MainActivity extends ActionBarActivity {
         this.updateViewState();
     }
 
-    private int fileCount() {
-        return new File(this.baseDirectory).listFiles().length;
-    }
 
     public void updateViewState() {
-        int fileCount = this.fileCount();
+        int fileCount = this.storage.fileCount();
         String message = Integer.toString(fileCount) + " files";
 
         if (this.filesAtStartOfRecording != null) {
@@ -184,7 +182,22 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    public void erase(View view) {
 
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Erase all files?")
+                .setMessage("Are you sure you want to delete all files?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        MainActivity.this.storage.clear();
+                        MainActivity.this.updateViewState();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
