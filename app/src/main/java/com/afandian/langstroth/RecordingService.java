@@ -41,7 +41,7 @@ public class RecordingService extends IntentService {
     }
 
     public void triggerRaw(String baseDirectory)  {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.UK);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ssZ", Locale.UK);
         String filename = baseDirectory + "/" + sdf.format(new Date()) + ".wav";
 
         AudioRecorder recorder = new AudioRecorder();

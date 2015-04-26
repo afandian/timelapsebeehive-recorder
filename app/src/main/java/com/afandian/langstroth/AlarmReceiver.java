@@ -14,8 +14,6 @@ import java.util.Calendar;
 public class AlarmReceiver extends WakefulBroadcastReceiver {
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
-    private String baseDirectory;
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -29,11 +27,9 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         startWakefulService(context, service);
     }
 
-    public void setAlarm(Context context, String baseDirectory) {
+    public void setAlarm(Context context, String baseDirectory, MainActivity.duration duration, MainActivity.interval alarmInterval) {
         // Just in case.
         this.cancelAlarm(context);
-
-        this.baseDirectory = baseDirectory;
 
         this.alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 
@@ -41,20 +37,36 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         // http://stackoverflow.com/questions/12470453/send-data-to-the-alarm-manager-broadcast-receiver
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra("baseDirectory", baseDirectory);
+
+        long durationMillis = 0;
+        if (duration == MainActivity.duration.ONE_SECOND) {
+            intent.putExtra("duration", 1000);
+        } else if (duration == MainActivity.duration.FIVE_SECONDS) {
+            intent.putExtra("duration", 5000);
+        } else if (duration == MainActivity.duration.TEN_SECONDS) {
+            intent.putExtra("duration", 10000);
+        }
+
         this.alarmIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 03);
-        long initialAlarm = calendar.getTimeInMillis();
-        initialAlarm = 0;
 
-        int MINUTE_REPEAT = 1;
+        int minutes = 0;
+        switch (alarmInterval) {
+            case HOUR:
+                minutes = 60;
+                break;
+            case THIRTY_MINUTES: minutes = 30 ;
+                break;
+            case FIFTEEN_MINUTES: minutes = 15 ;
+                break;
+            case FIVE_MINUTES: minutes = 5 ;
+                break;
+        }
 
-        this.alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, initialAlarm,
-                1000 * 60 * MINUTE_REPEAT, alarmIntent);
+        this.alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0, 1000 * 60 * minutes, alarmIntent);
     }
+
+
 
     public void cancelAlarm(Context context) {
         if (this.alarmMgr!= null) {

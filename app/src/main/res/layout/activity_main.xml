@@ -12,7 +12,8 @@
         android:layout_height="fill_parent"
         android:layout_centerHorizontal="true"
         android:id="@+id/layout"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:weightSum="1">
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,44 +29,118 @@
             android:layout_gravity="center_horizontal"
             android:textSize="@dimen/abc_text_size_headline_material" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="start schedule"
-            android:id="@+id/button"
-            android:clickable="true"
-            android:onClick="start"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@+id/stop"
-            android:layout_toStartOf="@+id/stop"
-            android:layout_below="@+id/numFiles" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="stop schedule"
-            android:id="@+id/stop"
-            android:clickable="true"
-            android:onClick="stop"
-            android:layout_alignTop="@+id/button"
-            android:layout_alignRight="@+id/recordNow"
-            android:layout_alignEnd="@+id/recordNow"
-            android:layout_toRightOf="@+id/numFiles"
-            android:layout_toEndOf="@+id/numFiles" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="start schedule"
+                android:id="@+id/start"
+                android:clickable="true"
+                android:onClick="start"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_toLeftOf="@+id/stop"
+                android:layout_toStartOf="@+id/stop"
+                android:layout_below="@+id/numFiles" />
 
-        <Button
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="stop schedule"
+                android:id="@+id/stop"
+                android:clickable="true"
+                android:onClick="stop"
+                android:layout_alignTop="@+id/button"
+                android:layout_alignRight="@+id/recordNow"
+                android:layout_alignEnd="@+id/recordNow"
+                android:layout_toRightOf="@+id/numFiles"
+                android:layout_toEndOf="@+id/numFiles" />
+        </LinearLayout>
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="sample now"
-            android:id="@+id/recordNow"
-            android:clickable="true"
-            android:onClick="recordNow"
-            android:layout_below="@+id/button"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Trigger every"
+            android:id="@+id/textView" />
+
+
+
+
+
+            <RadioGroup
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="hour"
+                    android:id="@+id/hour"
+                    android:checked="false"
+                    android:clickable="true" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="30 mins"
+                    android:id="@+id/thirtyMinutes"
+                    android:checked="false" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15 mins"
+                    android:id="@+id/fifteenMinutes"
+                    android:checked="false" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5 mins"
+                    android:id="@+id/fiveMinutes"
+                    android:checked="false" />
+            </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Record for"
+            android:id="@+id/textView2" />
+
+        <RadioGroup
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 second"
+                android:id="@+id/oneSecond"
+                android:checked="false" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5 seconds"
+                android:id="@+id/fiveSeconds"
+                android:checked="false" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10 seconds"
+                android:id="@+id/tenSeconds"
+                android:checked="false" />
+        </RadioGroup>
+
     </LinearLayout>
 
 </RelativeLayout>
