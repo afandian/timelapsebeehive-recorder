@@ -83,28 +83,32 @@
                     android:text="hour"
                     android:id="@+id/hour"
                     android:checked="false"
-                    android:clickable="true" />
+                    android:clickable="true"
+                    android:onClick="onRadioButtonClicked"/>
 
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="30 mins"
                     android:id="@+id/thirtyMinutes"
-                    android:checked="false" />
+                    android:checked="false"
+                    android:onClick="onRadioButtonClicked"/>
 
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="15 mins"
                     android:id="@+id/fifteenMinutes"
-                    android:checked="false" />
+                    android:checked="false"
+                    android:onClick="onRadioButtonClicked"/>
 
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="5 mins"
                     android:id="@+id/fiveMinutes"
-                    android:checked="false" />
+                    android:checked="false"
+                    android:onClick="onRadioButtonClicked"/>
             </RadioGroup>
 
         <TextView
@@ -124,21 +128,24 @@
                 android:layout_height="wrap_content"
                 android:text="1 second"
                 android:id="@+id/oneSecond"
-                android:checked="false" />
+                android:checked="false"
+            android:onClick="onRadioButtonClicked"/>
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="5 seconds"
                 android:id="@+id/fiveSeconds"
-                android:checked="false" />
+                android:checked="false"
+                android:onClick="onRadioButtonClicked"/>
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="10 seconds"
                 android:id="@+id/tenSeconds"
-                android:checked="false" />
+                android:checked="false"
+                android:onClick="onRadioButtonClicked"/>
         </RadioGroup>
 
         <TextView

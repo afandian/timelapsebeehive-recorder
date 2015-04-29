@@ -20,8 +20,8 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         Intent service = new Intent(context, RecordingService.class);
 
         // This is called in a different context to setAlarm so this.baseDirectory isn't set.
-        String baseDirectory = intent.getStringExtra("baseDirectory");
-        service.putExtra("baseDirectory", baseDirectory);
+        int duration = intent.getIntExtra("duration", 5000);
+        service.putExtra("duration", duration);
 
         // Start the service, keeping the device awake while it is launching.
         startWakefulService(context, service);
@@ -29,7 +29,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         // TODO notify MainActivity to update view.
     }
 
-    public void setAlarm(Context context, String baseDirectory, MainActivity.duration duration, MainActivity.interval alarmInterval) {
+    public void setAlarm(Context context, MainActivity.duration duration, MainActivity.interval alarmInterval) {
         // Just in case.
         this.cancelAlarm(context);
 
@@ -38,7 +38,6 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         // Order of these 3 lines is significant.
         // http://stackoverflow.com/questions/12470453/send-data-to-the-alarm-manager-broadcast-receiver
         Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra("baseDirectory", baseDirectory);
 
         long durationMillis = 0;
         if (duration == MainActivity.duration.ONE_SECOND) {
@@ -67,8 +66,6 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
 
         this.alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0, 1000 * 60 * minutes, alarmIntent);
     }
-
-
 
     public void cancelAlarm(Context context) {
         if (this.alarmMgr!= null) {

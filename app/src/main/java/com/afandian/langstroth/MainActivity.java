@@ -2,6 +2,8 @@ package com.afandian.langstroth;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -43,7 +45,7 @@ public class MainActivity extends ActionBarActivity {
 
     TextView numFiles;
 
-    private Storage storage = new Storage(this);
+    private Storage storage = new Storage();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,12 @@ public class MainActivity extends ActionBarActivity {
 
         // Load state and update view.
         this.onRestoreInstanceState(savedInstanceState);
+
+        // May need to wake media scanner to the fact that this base directory exists at all!
+        Intent mediaScannerIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Uri fileContentUri = Uri.fromFile(this.storage.veryBaseDir);
+        mediaScannerIntent.setData(fileContentUri);
+        this.sendBroadcast(mediaScannerIntent);
     }
 
     @Override
@@ -87,7 +95,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void start(View view) {
         this.filesAtStartOfRecording = new Integer(this.storage.fileCount());
-        alarm.setAlarm(this, this.baseDirectory, this.recordDuration, this.recordInterval);
+        alarm.setAlarm(this, this.recordDuration, this.recordInterval);
         this.scheduleRunning = true;
         this.updateViewState();
     }
