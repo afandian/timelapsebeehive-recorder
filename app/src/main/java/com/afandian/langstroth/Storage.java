@@ -71,7 +71,7 @@ public class Storage {
         // TODO - maybe save in a database
 
         Intent mediaScannerIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        Uri fileContentUri = Uri.fromFile(this.baseDir);
+        Uri fileContentUri = Uri.fromFile(new File(path));
         mediaScannerIntent.setData(fileContentUri);
         context.sendBroadcast(mediaScannerIntent);
     }
