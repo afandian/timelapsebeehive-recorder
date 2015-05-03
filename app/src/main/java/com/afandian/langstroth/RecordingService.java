@@ -3,8 +3,14 @@ package com.afandian.langstroth;
 import android.app.IntentService;
 import android.content.Intent;
 import android.media.MediaRecorder;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,6 +45,8 @@ public class RecordingService extends IntentService {
 
         recorder.stop();
         this.storage.save(filename, now, this);
+
+        MediaScannerConnection.scanFile(this,  new String[] { filename }, null,null);
     }
 
 
@@ -50,6 +58,4 @@ public class RecordingService extends IntentService {
 
         AlarmReceiver.completeWakefulIntent(intent);
     }
-
-
 }

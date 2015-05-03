@@ -130,6 +130,7 @@ public class AudioRecorder  {
             }
         }
         try {
+            stream.getFD().sync();
             stream.close();
 
             RandomAccessFile f = new RandomAccessFile(new File(this.path), "rw");
@@ -142,6 +143,7 @@ public class AudioRecorder  {
             f.write((byte)((length >> 16) & 0xFF));
             f.write((byte)((length >> 24) & 0xFF));
 
+            stream.getFD().sync();
             f.close();
         } catch (IOException e) {
             e.printStackTrace();

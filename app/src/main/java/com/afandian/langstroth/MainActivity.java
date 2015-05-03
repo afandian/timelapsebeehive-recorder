@@ -191,7 +191,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void erase(View view) {
-
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Erase all files?")
@@ -205,6 +204,10 @@ public class MainActivity extends ActionBarActivity {
                 })
                 .setNegativeButton("No", null)
                 .show();
+    }
+
+    public void scan(View view) {
+        this.storage.scan(this);
     }
 
     @Override

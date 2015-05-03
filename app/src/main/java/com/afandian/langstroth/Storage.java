@@ -5,8 +5,12 @@ import android.content.Intent;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -77,12 +81,31 @@ public class Storage {
     }
 
     public String getPathForRecording(Date now, int duration) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ssZ", Locale.UK);
         String directoryPath = this.basePath + "/sample/" + duration;
-
         // TODO do something with result...
         boolean success = new File(directoryPath).mkdirs();
 
-        return directoryPath + "/" + sdf.format(now) + ".wav";
+        return directoryPath + "/" + now.getTime() + ".wav";
+    }
+
+    public void scan(Context context, File base) {
+        File[] files = base.listFiles();
+        if (files == null) {
+            return;
+        } else {
+            for (File file : files) {
+                if (file.isFile()) {
+                    String path = file.getAbsolutePath();
+                    MediaScannerConnection.scanFile(context, new String[]{path}, null, null);
+                    Log.e("MyApp", path);
+                } else if (file.isDirectory()) {
+                    this.scan(context, file);
+                }
+            }
+        }
+    }
+
+    public void scan(Context context) {
+        this.scan(context, this.baseDir);
     }
 }
