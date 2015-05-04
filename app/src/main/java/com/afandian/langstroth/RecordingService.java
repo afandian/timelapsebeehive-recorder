@@ -21,16 +21,18 @@ import java.util.Locale;
  * Created by joe on 24/04/2015.
  */
 public class RecordingService extends IntentService {
-    private Storage storage = new Storage();
+//    private Storage storage = new Storage(this);
 
+    private LangstrothApplication application;
     public RecordingService() {
         super("SchedulingService");
+        this.application = (LangstrothApplication)this.getApplication();
     }
 
     public void triggerRaw(int duration)  {
         Date now = new Date();
 
-        String filename = this.storage.getPathForRecording(now, duration);
+        String filename = this.application.getStorage().getPathForRecording(now, duration);
 
         AudioRecorder recorder = new AudioRecorder();
         recorder.startRecording(filename);
@@ -44,7 +46,7 @@ public class RecordingService extends IntentService {
         }
 
         recorder.stop();
-        this.storage.save(filename, now, this);
+        this.application.getStorage().save(filename, now, this);
 
         MediaScannerConnection.scanFile(this,  new String[] { filename }, null,null);
     }

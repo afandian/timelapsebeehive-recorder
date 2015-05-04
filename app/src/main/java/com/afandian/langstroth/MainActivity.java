@@ -45,11 +45,19 @@ public class MainActivity extends ActionBarActivity {
 
     TextView numFiles;
 
-    private Storage storage = new Storage();
+//    private Storage storage;
+
+    // Used to store the current logged in status.
+    private LangstrothApplication application;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.application = (LangstrothApplication)this.getApplication();
+
+//        this.storage = new Storage(this, this.application);
+
         setContentView(R.layout.activity_main);
 
         this.numFiles =  (TextView)findViewById(R.id.numFiles);
@@ -71,7 +79,7 @@ public class MainActivity extends ActionBarActivity {
 
         // May need to wake media scanner to the fact that this base directory exists at all!
         Intent mediaScannerIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        Uri fileContentUri = Uri.fromFile(this.storage.veryBaseDir);
+        Uri fileContentUri = Uri.fromFile(this.application.getStorage().veryBaseDir);
         mediaScannerIntent.setData(fileContentUri);
         this.sendBroadcast(mediaScannerIntent);
     }
@@ -94,7 +102,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void start(View view) {
-        this.filesAtStartOfRecording = new Integer(this.storage.fileCount());
+        this.filesAtStartOfRecording = new Integer(this.application.getStorage().fileCount());
         alarm.setAlarm(this, this.recordDuration, this.recordInterval);
         this.scheduleRunning = true;
         this.updateViewState();
@@ -109,7 +117,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     public void updateViewState() {
-        int fileCount = this.storage.fileCount();
+        int fileCount = this.application.getStorage().fileCount();
         String message = Integer.toString(fileCount) + " files";
 
         if (this.filesAtStartOfRecording != null) {
@@ -198,7 +206,7 @@ public class MainActivity extends ActionBarActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        MainActivity.this.storage.clear();
+                        MainActivity.this.application.getStorage().clear();
                         MainActivity.this.updateViewState();
                     }
                 })
@@ -207,7 +215,18 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void scan(View view) {
-        this.storage.scan(this);
+        this.application.getStorage().scan(this);
+    }
+
+    public void upload(View view) {
+        // TODO do these in sequence.
+        if (!this.application.getStorage().isAuthenticated()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+
+            startActivity(intent);
+        } else {
+            this.application.getStorage().upload();
+        }
     }
 
     @Override

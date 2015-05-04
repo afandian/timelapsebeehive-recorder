@@ -178,7 +178,14 @@
                 android:id="@+id/scan"
                 android:onClick="scan"
                 android:layout_gravity="center_horizontal" />
-            </LinearLayout>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upload"
+                android:onClick="upload"
+                android:id="@+id/upload" />
+        </LinearLayout>
 
 
     </LinearLayout>
