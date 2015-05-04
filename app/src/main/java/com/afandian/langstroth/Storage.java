@@ -161,7 +161,10 @@ public class Storage {
                         // URL is http://xxx/recordings/«user-id»/«duration»/
                         String duration = file.getParentFile().getName();
                         String filename = file.getName();
-                        String url = RECORDINGS_ENDPOINT + "/" + Storage.this.application.getUserId() + "/" + duration + "/" + filename;
+                        
+                        // Hardcoded to 1 beehive for now.
+                        String entity = "1";
+                        String url = RECORDINGS_ENDPOINT + "/" + Storage.this.application.getUserId() + "/" + entity + "/" + duration + "/" + filename;
 
                         Log.e("Langstroth", "UPlOAD" + file.getAbsolutePath() + " TO " + url);
 
@@ -236,7 +239,7 @@ public class Storage {
                 if (file.isFile()) {
                     String path = file.getAbsolutePath();
                     MediaScannerConnection.scanFile(context, new String[]{path}, null, null);
-                    Log.e("MyApp", path);
+                    Log.e("Langstroth", path);
                 } else if (file.isDirectory()) {
                     this.scan(context, file);
                 }

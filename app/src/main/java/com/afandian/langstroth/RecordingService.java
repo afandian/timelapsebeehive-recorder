@@ -21,11 +21,14 @@ import java.util.Locale;
  * Created by joe on 24/04/2015.
  */
 public class RecordingService extends IntentService {
-//    private Storage storage = new Storage(this);
-
     private LangstrothApplication application;
     public RecordingService() {
         super("SchedulingService");
+    }
+
+    public void onCreate() {
+        super.onCreate();
+
         this.application = (LangstrothApplication)this.getApplication();
     }
 
