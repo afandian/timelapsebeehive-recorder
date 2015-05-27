@@ -206,7 +206,7 @@ public class MainActivity extends ActionBarActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        MainActivity.this.application.getStorage().clear();
+                        MainActivity.this.application.getStorage().deleteAll();
                         MainActivity.this.updateViewState();
                     }
                 })

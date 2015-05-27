@@ -95,11 +95,22 @@ public class Storage {
         return this.fileCount(this.baseDir);
     }
 
-    public void clear() {
-        File[] files = baseDir.listFiles();
-        for(File file : files) {
-            file.delete();
+    public void deleteAll(File base) {
+        File[] files = base.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile() && file.getName().endsWith(".wav")) {
+                    file.delete();
+                } else if (file.isDirectory()) {
+                    deleteAll(file);
+                }
+            }
         }
+
+    }
+
+    public void deleteAll() {
+        deleteAll(baseDir);
     }
 
 
@@ -150,8 +161,6 @@ public class Storage {
         }
 
         private void uploadDir(File base, String cookie) {
-
-
             File[] files = base.listFiles();
             if (files == null) {
                 return;
@@ -161,7 +170,7 @@ public class Storage {
                         // URL is http://xxx/recordings/«user-id»/«duration»/
                         String duration = file.getParentFile().getName();
                         String filename = file.getName();
-                        
+
                         // Hardcoded to 1 beehive for now.
                         String entity = "1";
                         String url = RECORDINGS_ENDPOINT + "/" + Storage.this.application.getUserId() + "/" + entity + "/" + duration + "/" + filename;
@@ -202,9 +211,7 @@ public class Storage {
         @Override
         protected Boolean doInBackground(Void... params) {
             String cookie = Storage.this.application.getLangstrothCookie();
-
             uploadDir(this.baseDir, cookie);
-
             return true;
         }
     }
