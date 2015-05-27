@@ -23,7 +23,7 @@ import java.util.Locale;
 public class RecordingService extends IntentService {
     private LangstrothApplication application;
     public RecordingService() {
-        super("SchedulingService");
+        super("MyService");
     }
 
     public void onCreate() {
@@ -51,7 +51,7 @@ public class RecordingService extends IntentService {
         recorder.stop();
         this.application.getStorage().save(filename, now, this);
 
-        MediaScannerConnection.scanFile(this,  new String[] { filename }, null,null);
+        MediaScannerConnection.scanFile(this.getApplicationContext(),  new String[] { filename }, null,null);
     }
 
 

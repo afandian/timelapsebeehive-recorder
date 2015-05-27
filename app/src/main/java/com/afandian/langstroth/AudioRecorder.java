@@ -143,7 +143,7 @@ public class AudioRecorder  {
             f.write((byte)((length >> 16) & 0xFF));
             f.write((byte)((length >> 24) & 0xFF));
 
-            stream.getFD().sync();
+            f.getFD().sync();
             f.close();
         } catch (IOException e) {
             e.printStackTrace();
