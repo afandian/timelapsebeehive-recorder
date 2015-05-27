@@ -86,8 +86,8 @@ public class AudioRecorder  {
                 0x00, 0x00, 0x00, 0x00,
                 // 28 byte - (Sample Rate * BitsPerSample * Channels) / 8.
                 0x00, 0x00, 0x00, 0x00,
-                // 32 (BitsPerSample * Channels) / 8.1 - 8 bit mono2 - 8 bit stereo/16 bit mono4 - 16 bit stereo
-                0x00, 0x00,
+                // 32 (BitsPerSample * Channels). 2 = 16 bit mono.
+                0x02, 0x00,
                 // 34 Bits per sample, to fill.
                 0x00, 0x00,
                 // 36 "data"
@@ -135,13 +135,23 @@ public class AudioRecorder  {
 
             RandomAccessFile f = new RandomAccessFile(new File(this.path), "rw");
 
-            // Set file size.
             long length = f.length();
+
+            // Set the file size less the first 8 bytes.
+            long fileSize = length - 8;
+            f.seek(4);
+            f.write((byte)(fileSize & 0xFF));
+            f.write((byte)((fileSize >> 8) & 0xFF));
+            f.write((byte)((fileSize >> 16) & 0xFF));
+            f.write((byte)((fileSize >> 24) & 0xFF));
+
+            // Set the data chunk size, less the whole header.
+            long dataSize = length - 44;
             f.seek(40);
-            f.write((byte)(length & 0xFF));
-            f.write((byte)((length >> 8) & 0xFF));
-            f.write((byte)((length >> 16) & 0xFF));
-            f.write((byte)((length >> 24) & 0xFF));
+            f.write((byte)(dataSize & 0xFF));
+            f.write((byte)((dataSize >> 8) & 0xFF));
+            f.write((byte)((dataSize >> 16) & 0xFF));
+            f.write((byte)((dataSize >> 24) & 0xFF));
 
             f.getFD().sync();
             f.close();
