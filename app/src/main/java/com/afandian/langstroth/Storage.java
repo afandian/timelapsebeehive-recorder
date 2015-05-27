@@ -100,7 +100,11 @@ public class Storage {
         if (files != null) {
             for (File file : files) {
                 if (file.isFile() && file.getName().endsWith(".wav")) {
+                    String path = file.getAbsolutePath();
+
                     file.delete();
+
+                    MediaScannerConnection.scanFile(context, new String[]{path}, null, null);
                 } else if (file.isDirectory()) {
                     deleteAll(file);
                 }
@@ -191,7 +195,12 @@ public class Storage {
                             StatusLine statusLine = response.getStatusLine();
                             if(statusLine.getStatusCode() == HttpStatus.SC_OK || statusLine.getStatusCode() == HttpStatus.SC_CREATED){
                                 Log.e("Langstroth", "UPlOADED " + url);
+
+                                String path = file.getAbsolutePath();
+
                                 file.delete();
+
+                                MediaScannerConnection.scanFile(context, new String[]{path}, null, null);
                             } else{
                                 Log.e("Langstroth", "NOT UPLOADED " + statusLine.getStatusCode());
                                 response.getEntity().getContent().close();
