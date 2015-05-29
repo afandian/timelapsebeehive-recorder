@@ -1,10 +1,12 @@
-# Langstroth
+# Timelapse Beehive AUdio
 
-Time-lapse audio recorder Android app. Created to listen inside a beehive. 
+Timelapse audio recorder Android app. Created to listen inside a beehive. 
 
-Sends uploads to [Langstroth](https://github.com/afandian/langstroth-server) web service.
+Sends uploads to [Time Lapse Beehive](https://timelapsebeehive.com) web service.
 
-Work in progress.
+Get in contact if you want to use it - joe@afandian.com
+
+Internally called Langstroth, that was an earlier name.
 
 ## License
 
