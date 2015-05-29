@@ -1,4 +1,4 @@
-# Timelapse Beehive AUdio
+# Timelapse Beehive Recorder
 
 Timelapse audio recorder Android app. Created to listen inside a beehive. 
 
