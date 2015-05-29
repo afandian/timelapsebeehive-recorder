@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
 import java.util.Calendar;
@@ -23,10 +24,11 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         int duration = intent.getIntExtra("duration", 5000);
         service.putExtra("duration", duration);
 
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        audioManager.setParameters("noise_suppression=off");
+
         // Start the service, keeping the device awake while it is launching.
         startWakefulService(context, service);
-
-        // TODO notify MainActivity to update view.
     }
 
     public void setAlarm(Context context, MainActivity.duration duration, MainActivity.interval alarmInterval) {

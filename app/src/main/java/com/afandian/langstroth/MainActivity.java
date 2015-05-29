@@ -3,18 +3,17 @@ package com.afandian.langstroth;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
-
-import java.io.File;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -45,8 +44,6 @@ public class MainActivity extends ActionBarActivity {
 
     TextView numFiles;
 
-//    private Storage storage;
-
     // Used to store the current logged in status.
     private LangstrothApplication application;
 
@@ -55,8 +52,6 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         this.application = (LangstrothApplication)this.getApplication();
-
-//        this.storage = new Storage(this, this.application);
 
         setContentView(R.layout.activity_main);
 
@@ -75,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
         this.stopButton = (Button)findViewById(R.id.stop);
 
         // Load state and update view.
-        this.onRestoreInstanceState(savedInstanceState);
+        this.loadState();
 
         // May need to wake media scanner to the fact that this base directory exists at all!
         Intent mediaScannerIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -125,6 +120,7 @@ public class MainActivity extends ActionBarActivity {
             message = message + ", " + newFiles.toString() + " since start of schedule";
         }
         numFiles.setText(message);
+
 
         if (this.scheduleRunning) {
             this.startButton.setEnabled(false);
@@ -229,25 +225,54 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null){
-            super.onRestoreInstanceState(savedInstanceState);
+    private void loadState() {
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
 
-            this.recordInterval = (interval) savedInstanceState.getSerializable("period");
-            this.recordDuration = (duration) savedInstanceState.getSerializable("duration");
-            this.scheduleRunning = savedInstanceState.getBoolean("scheduleRunning");
+        switch (preferences.getString("interval", "")) {
+            case "HOUR": this.recordInterval = interval.HOUR; break;
+            case "THIRTY_MINUTES": this.recordInterval = interval.THIRTY_MINUTES; break;
+            case "FIFTEEN_MINUTES": this.recordInterval = interval.FIFTEEN_MINUTES; break;
+            case "FIVE_MINUTES": this.recordInterval = interval.FIVE_MINUTES; break;
         }
 
-        this.updateViewState();
+        switch (preferences.getString("duration", "")) {
+            case "ONE_SECOND": this.recordDuration = duration.ONE_SECOND; break;
+            case "FIVE_SECONDS": this.recordDuration = duration.FIVE_SECONDS; break;
+            case "TEN_SECONDS": this.recordDuration = duration.TEN_SECONDS; break;
+        }
+
+        this.scheduleRunning = preferences.getBoolean("scheduleRunning", true);
+
+        Log.i("Langstroth", "Restore recordInterval " + this.recordInterval);
+        Log.i("Langstroth", "Restore recordDuration " + this.recordDuration);
+        Log.i("Langstroth", "Restore scheduleRunning " + this.scheduleRunning);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
+    private void saveState() {
+        Log.i("Langstroth", "Save recordInterval " + this.recordInterval);
+        Log.i("Langstroth", "Save recordDuration " + this.recordDuration);
+        Log.i("Langstroth", "Save scheduleRunning " + this.scheduleRunning);
 
-        savedInstanceState.putSerializable("period", this.recordInterval);
-        savedInstanceState.putSerializable("duration", this.recordDuration);
-        savedInstanceState.putBoolean("scheduleRunning", this.scheduleRunning);
+
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        editor.putString("interval", this.recordInterval.toString());
+        editor.putString("duration", this.recordDuration.toString());
+        editor.putBoolean("scheduleRunning", this.scheduleRunning);
+
+        editor.commit();
+    }
+
+    protected void onPause()  {
+        super.onPause();
+        this.saveState();
+    }
+
+    protected void onResume() {
+        super.onResume();
+
+        this.loadState();
+        this.updateViewState();
     }
 }

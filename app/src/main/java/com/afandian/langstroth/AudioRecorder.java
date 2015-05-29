@@ -2,8 +2,10 @@ package com.afandian.langstroth;
 
 import android.content.Context;
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,7 +14,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class AudioRecorder  {
-    private static int RECORDER_SAMPLERATE = 22050; // 44100 crashes
+    private static int RECORDER_SAMPLERATE = 44100; // 22050 best available. 44100 crashes
     private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
     private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
     private AudioRecord recorder = null;
@@ -20,16 +22,27 @@ public class AudioRecorder  {
     private boolean isRecording = false;
     private String path;
 
+    int bufferSize;
 
-    int BufferElements2Rec = 1024; // want to play 2048 (2K) since 2 bytes we use only 1024
+//    int BufferElements2Rec = 2048; // want to play 4096 (2K) since 2 bytes we use only 2048
     int BytesPerElement = 2; // 2 bytes in 16bit format
 
     public void startRecording(String path) {
         this.path = path;
 
-        recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
+        // No official way to get un-noise-reduced, non-gain-controlled audio officially.
+        // VOICE_RECOGNITION is the cleanest.
+        // http://stackoverflow.com/questions/14377481/how-avoid-automatic-gain-control-with-audiorecord
+        bufferSize = AudioRecord.getMinBufferSize(RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
+
+        recorder = new AudioRecord(MediaRecorder.AudioSource.VOICE_RECOGNITION,
                 RECORDER_SAMPLERATE, RECORDER_CHANNELS,
-                RECORDER_AUDIO_ENCODING, BufferElements2Rec * BytesPerElement);
+                RECORDER_AUDIO_ENCODING, bufferSize);
+
+        if (recorder.getState() != recorder.STATE_INITIALIZED) {
+            Log.e("Langstroth", "Can't create AudioRecord, stopping");
+            return;
+        }
 
         recorder.startRecording();
         isRecording = true;
@@ -55,7 +68,7 @@ public class AudioRecorder  {
     }
 
     private void writeAudioDataToFile() {
-        short buffer[] = new short[BufferElements2Rec];
+        short buffer[] = new short[bufferSize];
 
         FileOutputStream stream = null;
         try {
@@ -121,10 +134,10 @@ public class AudioRecorder  {
 
         while (isRecording) {
             // blocking read
-            recorder.read(buffer, 0, BufferElements2Rec);
+            recorder.read(buffer, 0, bufferSize);
             try {
                 byte bData[] = short2byte(buffer);
-                stream.write(bData, 0, BufferElements2Rec * BytesPerElement);
+                stream.write(bData, 0, bufferSize);
             } catch (IOException e) {
                 e.printStackTrace();
             }
